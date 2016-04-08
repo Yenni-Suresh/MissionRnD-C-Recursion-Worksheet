@@ -43,6 +43,66 @@ P.S: The Above Problem is just a modified version of a popular BackTracking prob
 */
 
 #include "stdafx.h"
+int colloid(int x, int y, int *field, int n, int i, int j)
+{
+	int k, l;
+	if (y == j)
+		return 0;
+	k = i + 1;
+	l = j + 1;
+	while (k != x + 1)
+	{
+		if (k == x && l == y)
+			return 0;
+		k++;
+		l++;
+	}
+	k = i + 1;
+	l = j - 1;
+	while (k != x + 1 && l >= 0)
+	{
+		if (k == x && l == y)
+			return 0;
+		k++;
+		l--;
+	}
+	return 1;
+}
+int check(int x, int y, int *field, int n)
+{
+	int i, j;
+	for (j = 0, i = 0; j < n && i < x; j++)
+	{
+		if (*((field + i*n) + j) == 1)
+		{
+			if (colloid(x, y, field, n, i, j) == 0)
+				return 0;
+			i++;
+			j = -1;
+		}
+	}
+	return 1;
+}
+int solve(int *field, int n, int index)
+{
+	int y;
+	for (y = 0; y < n && index < n; y++)
+	{
+		if (check(index, y, field, n) == 1)
+		{
+			*((field + index*n) + y) = 1;
+			if (solve(field, n, index + 1) == 0)
+				*((field + index*n) + y) = 0;
+			else return 1;
+		}
+
+	}
+	if (y < n && index == n)
+		return 1;
+	else return 0;
+}
 int solve_nsnipers(int *battlefield, int n){
-	return 0;
+	if (battlefield == NULL || n < 1)
+		return 0;
+	return solve(battlefield, n, 0);
 }
