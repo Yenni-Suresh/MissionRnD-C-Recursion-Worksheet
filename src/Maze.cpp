@@ -35,8 +35,40 @@ more parameters .
 
 #include<stdlib.h>
 
-
+int check_path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2, int f1, int f2, int f3, int f4, int xf, int yf)
+{
+	int res = 0;
+	if (x2 == x1 && y2 == y1)
+		return 1;
+	if (rows<1 || columns<1 || x1<0 || x1>rows - 1 || y1<0 || y1>columns - 1)
+		return 0;
+	if (*((maze + x1*columns) + y1) != 1)
+		return 0;
+	if ((y1 - 1 > -1 && f2 == 0) && (x1 != xf || y1 - 1 != yf))
+	{
+		res = res + check_path_exists(maze, rows, columns, x1, y1 - 1, x2, y2, 1, 0, 0, 0, xf, yf);
+	}
+	if ((y1 + 1 < columns&&f1 == 0) && (x1 != xf || y1 + 1 != yf))
+	{
+		res = res + check_path_exists(maze, rows, columns, x1, y1 + 1, x2, y2, 0, 1, 0, 0, xf, yf);
+	}
+	if ((x1 - 1 > -1 && f4 == 0) && (x1 - 1 != xf || y1 != yf))
+	{
+		res = res + check_path_exists(maze, rows, columns, x1 - 1, y1, x2, y2, 0, 0, 1, 0, xf, yf);
+	}
+	if ((x1 + 1 < rows&&f3 == 0) && (x1 + 1 != xf || y1 != yf))
+	{
+		res = res + check_path_exists(maze, rows, columns, x1 + 1, y1, x2, y2, 0, 0, 0, 1, xf, yf);
+	}
+	return res;
+}
 int path_exists(int *maze, int rows, int columns, int x1, int y1, int x2, int y2)
 {
-	return 1;
+	if (rows<1||columns<1||x1<0||x1>rows-1||y1<0||y1>columns-1)
+	    return 0;
+	if (*((maze + x1*columns) + y1) != 1 || *((maze + x2*columns) + y2) != 1)
+		return 0;
+	if (check_path_exists(maze, rows, columns, x1, y1, x2, y2, 0, 0, 0, 0,x1,y1) == 0)
+		return 0;
+	else return 1;
 }
